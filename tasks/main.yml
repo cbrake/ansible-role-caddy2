@@ -1,0 +1,39 @@
+- name: create caddy2 group
+  group:
+    name: caddy2
+    state: present
+
+- name: create caddy2 user
+  user:
+    name: caddy2
+    group: caddy2
+    createhome: true
+
+- name: create needed dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: caddy2
+  with_items:
+    - /var/lib/caddy2
+    - /etc/caddy2
+
+- name: Create Caddyfile
+  copy: content="{{ caddy2_config }}" dest="/etc/caddy2/Caddyfile" owner=caddy2
+  notify: restart caddy2
+
+- name: fetch caddy
+  unarchive:
+    src: https://github.com/caddyserver/caddy/releases/download/v{{ caddy2_version }}/caddy_{{ caddy2_version }}_Linux_x86_64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: 0755
+  register: fetch
+  notify:
+    - restart caddy2
+
+- name: caddy2 service file
+  template: src=caddy2.service.j2 dest=/etc/systemd/system/caddy2.service
+  notify:
+    - restart caddy2
+    - reload systemd
