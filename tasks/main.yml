@@ -24,7 +24,7 @@
 
 - name: fetch caddy
   unarchive:
-    src: https://github.com/caddyserver/caddy/releases/download/v{{ caddy2_version }}/caddy_{{ caddy2_version }}_Linux_x86_64.tar.gz
+    src: https://github.com/caddyserver/caddy/releases/download/v{{ caddy2_version }}/caddy_{{ caddy2_version }}_linux_amd64.tar.gz
     dest: /usr/local/bin
     remote_src: yes
     mode: 0755
