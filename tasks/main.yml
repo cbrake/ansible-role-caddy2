@@ -25,12 +25,16 @@
 - name: fetch caddy
   unarchive:
     src: https://github.com/caddyserver/caddy/releases/download/v{{ caddy2_version }}/caddy_{{ caddy2_version }}_linux_amd64.tar.gz
-    dest: /usr/local/bin
+    dest: /home/caddy2
     remote_src: yes
     mode: 0755
   register: fetch
   notify:
     - restart caddy2
+
+- name: rename to caddy2
+  command: mv /home/caddy2/caddy /usr/local/bin/caddy2
+  when: fetch.changed
 
 - name: caddy2 service file
   template: src=caddy2.service.j2 dest=/etc/systemd/system/caddy2.service

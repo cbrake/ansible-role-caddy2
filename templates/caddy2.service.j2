@@ -19,8 +19,8 @@ After=network.target
 [Service]
 User=caddy2
 Group=caddy2
-ExecStart=/usr/local/bin/caddy run --environ --config /etc/caddy2/Caddyfile
-ExecReload=/usr/local/bin/caddy reload --config /etc/caddy2/Caddyfile
+ExecStart=/usr/local/bin/caddy2 run --environ --config /etc/caddy2/Caddyfile
+ExecReload=/usr/local/bin/caddy2 reload --config /etc/caddy2/Caddyfile
 TimeoutStopSec=5s
 LimitNOFILE=1048576
 LimitNPROC=512
