@@ -45,3 +45,6 @@
   notify:
     - restart caddy2
     - reload systemd
+
+- name: start caddy2
+  service: name=caddy2 state=started enabled=yes
