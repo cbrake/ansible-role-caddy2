@@ -37,7 +37,7 @@
 # we want to leave the original file, otherwise above will think we need to re-run
 # the process
 - name: copy to caddy2
-  command: cp /home/caddy2/caddy /usr/local/bin/caddy2
+  command: cp /home/caddy2/caddy {{ caddy2_binary }}
   when: fetch.changed
 
 - name: caddy2 service file
