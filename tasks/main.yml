@@ -1,26 +1,35 @@
 - name: create caddy2 group
   group:
-    name: caddy2
+    name: "{{ caddy2_user }}"
     state: present
 
 - name: create caddy2 user
   user:
-    name: caddy2
-    group: caddy2
+    name: "{{ caddy2_user }}"
+    group: "{{ caddy2_user }}"
     createhome: true
 
 - name: create needed dirs
   file:
     path: "{{ item }}"
     state: directory
-    owner: caddy2
+    owner: "{{ caddy2_user }}"
   with_items:
     - /var/lib/caddy2
     - /etc/caddy2
 
 - name: Create Caddyfile
-  copy: content="{{ caddy2_config }}" dest="/etc/caddy2/Caddyfile" owner=caddy2
+  copy:
+    content="{{ caddy2_config }}" dest="/etc/caddy2/Caddyfile" owner={{
+    caddy2_user }}
   notify: restart caddy2
+
+- name: Create Caddy json config
+  copy:
+    content="{{ caddy2_config_json }}" dest="/etc/caddy2/config.json" owner={{
+    caddy2_user }}
+  notify: restart caddy2
+  when: caddy2_config_json is defined
 
 - name: fetch caddy
   unarchive:

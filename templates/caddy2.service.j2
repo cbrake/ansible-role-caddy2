@@ -15,12 +15,20 @@
 Description=Caddy
 Documentation=https://caddyserver.com/docs/
 After=network.target
+StartLimitIntervalSec=120
 
 [Service]
-User=caddy2
-Group=caddy2
+User={{ caddy2_user }}
+Group={{ caddy2_user }}
+{% if caddy2_config_json is defined %}
+ExecStart={{ caddy2_binary }} run --environ --config /etc/caddy2/config.json
+ExecReload={{ caddy2_binary }} reload --config /etc/caddy2/config.json
+{% else %}
 ExecStart={{ caddy2_binary }} run --environ --config /etc/caddy2/Caddyfile
 ExecReload={{ caddy2_binary }} reload --config /etc/caddy2/Caddyfile
+{% endif %}
+
+
 TimeoutStopSec=5s
 LimitNOFILE=1048576
 LimitNPROC=512
@@ -30,7 +38,6 @@ AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 Restart=on-failure
 RestartSec=10
-StartLimitIntervalSec=120
 StartLimitBurst=6
 
 [Install]

@@ -5,3 +5,4 @@ caddy2_config: |
   respond "Hello, world!"
 
 caddy2_binary: /usr/local/bin/caddy2
+caddy2_user: caddy2
