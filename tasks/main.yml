@@ -36,7 +36,7 @@
     src:
       https://github.com/caddyserver/caddy/releases/download/v{{ caddy2_version
       }}/caddy_{{ caddy2_version }}_linux_amd64.tar.gz
-    dest: /home/caddy2
+    dest: /home/{{ caddy2_user }}
     remote_src: yes
     mode: 0755
   register: fetch
@@ -48,7 +48,7 @@
 - name: copy to caddy2
   shell: |
     systemctl stop caddy2
-    cp /home/caddy2/caddy {{ caddy2_binary }}
+    cp /home/{{ caddy2_user }}/caddy {{ caddy2_binary }}
   when: fetch.changed
 
 - name: caddy2 service file
