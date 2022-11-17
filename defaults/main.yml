@@ -1,4 +1,4 @@
-caddy2_version: 2.5.2
+caddy2_version: 2.6.2
 
 # caddy2_config can be redefined in your top level server config
 caddy2_config: |
