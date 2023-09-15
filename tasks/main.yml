@@ -17,6 +17,7 @@
   with_items:
     - /var/lib/caddy2
     - /etc/caddy2
+    - /var/log/caddy2
 
 - name: Create Caddyfile
   copy:
