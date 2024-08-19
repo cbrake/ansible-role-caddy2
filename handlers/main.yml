@@ -1,4 +1,4 @@
-- name: reload systemd
+- name: reload systemd caddy2
   command: systemctl daemon-reload
 
 - name: restart caddy2

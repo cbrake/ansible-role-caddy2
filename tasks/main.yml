@@ -55,8 +55,8 @@
 - name: caddy2 service file
   template: src=caddy2.service.j2 dest=/etc/systemd/system/caddy2.service
   notify:
+    - reload systemd caddy2
     - restart caddy2
-    - reload systemd
 
 - name: start caddy2
   service: name=caddy2 state=started enabled=yes
