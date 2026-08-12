@@ -32,6 +32,8 @@
   notify: restart caddy2
   when: caddy2_config_json is defined
 
+# The release host closes a connection now and then, which used to end the
+# deploy at this task, so give it a few attempts before giving up.
 - name: fetch caddy
   unarchive:
     src:
@@ -41,6 +43,9 @@
     remote_src: yes
     mode: 0755
   register: fetch
+  until: fetch is succeeded
+  retries: 3
+  delay: 5
   notify:
     - restart caddy2
 
