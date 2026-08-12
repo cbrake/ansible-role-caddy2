@@ -38,10 +38,17 @@
     state: directory
     mode: "0755"
 
-# Downloading on every run was enough to get a server rate limited by the
-# release host, which then failed the deploy of a caddy that was already
-# installed. Caching the tarball under its version means this asks for it once.
-# The retries cover a connection the release host drops.
+- name: look for a cached caddy release
+  stat:
+    path: "{{ caddy2_tarball }}"
+  register: caddy2_cached
+
+# Downloading on every run was enough to get a server rate limited by the release
+# host, which then failed the deploy of a caddy that was already installed. Note
+# that get_url still makes a conditional request when the destination exists, and
+# that request fails the play when the host is unavailable, so the guard above is
+# what makes an installed version need no network at all. The retries cover a
+# connection dropped while actually downloading.
 - name: fetch caddy
   get_url:
     url:
@@ -49,6 +56,7 @@
       }}/caddy_{{ caddy2_version }}_linux_amd64.tar.gz
     dest: "{{ caddy2_tarball }}"
     mode: "0600"
+  when: not caddy2_cached.stat.exists
   register: fetch
   until: fetch is succeeded
   retries: 3
