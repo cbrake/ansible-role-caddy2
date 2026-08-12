@@ -6,3 +6,8 @@ caddy2_config: |
 
 caddy2_binary: /usr/local/bin/caddy2
 caddy2_user: caddy2
+
+# The release is cached and extracted under versioned names, so a run that has
+# already installed this version makes no request to the release host.
+caddy2_tarball: /root/caddy-{{ caddy2_version }}-linux-amd64.tar.gz
+caddy2_install_dir: /opt/caddy-{{ caddy2_version }}

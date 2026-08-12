@@ -32,30 +32,45 @@
   notify: restart caddy2
   when: caddy2_config_json is defined
 
-# The release host closes a connection now and then, which used to end the
-# deploy at this task, so give it a few attempts before giving up.
+- name: create install dir
+  file:
+    path: "{{ caddy2_install_dir }}"
+    state: directory
+    mode: "0755"
+
+# Downloading on every run was enough to get a server rate limited by the
+# release host, which then failed the deploy of a caddy that was already
+# installed. Caching the tarball under its version means this asks for it once.
+# The retries cover a connection the release host drops.
 - name: fetch caddy
-  unarchive:
-    src:
+  get_url:
+    url:
       https://github.com/caddyserver/caddy/releases/download/v{{ caddy2_version
       }}/caddy_{{ caddy2_version }}_linux_amd64.tar.gz
-    dest: /home/{{ caddy2_user }}
-    remote_src: yes
-    mode: 0755
+    dest: "{{ caddy2_tarball }}"
+    mode: "0600"
   register: fetch
   until: fetch is succeeded
   retries: 3
   delay: 5
-  notify:
-    - restart caddy2
 
-# we want to leave the original file, otherwise above will think we need to re-run
-# the process
-- name: copy to caddy2
-  shell: |
-    systemctl stop caddy2
-    cp /home/{{ caddy2_user }}/caddy {{ caddy2_binary }}
-  when: fetch.changed
+- name: extract caddy
+  unarchive:
+    src: "{{ caddy2_tarball }}"
+    dest: "{{ caddy2_install_dir }}"
+    remote_src: yes
+    creates: "{{ caddy2_install_dir }}/caddy"
+
+# Ansible installs through a temporary file and a rename, so this replaces the
+# binary of a running caddy without stopping it first, and the handler restarts
+# it once the whole play has had its say.
+- name: install caddy binary
+  copy:
+    remote_src: yes
+    src: "{{ caddy2_install_dir }}/caddy"
+    dest: "{{ caddy2_binary }}"
+    mode: "0755"
+  notify: restart caddy2
 
 - name: caddy2 service file
   template: src=caddy2.service.j2 dest=/etc/systemd/system/caddy2.service
